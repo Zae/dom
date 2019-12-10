@@ -65,8 +65,6 @@ class DomElement implements DomElementInterface
         );
         libxml_use_internal_errors(false);
 
-        $this->reloadSimpleXMLStruct();
-
         return $this;
     }
 
@@ -80,8 +78,6 @@ class DomElement implements DomElementInterface
         libxml_use_internal_errors(true);
         $this->DOMDocument->loadHTMLFile($path, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_use_internal_errors(false);
-
-        $this->reloadSimpleXMLStruct();
 
         return $this;
     }
@@ -208,7 +204,6 @@ class DomElement implements DomElementInterface
     public function wrap(DomElementInterface $elem)
     {
         $this->getParent()->dom()->replaceChild($elem->dom(), $this->dom());
-        $this->reloadSimpleXMLStruct();
 
         $elem->append($this);
     }
@@ -221,7 +216,6 @@ class DomElement implements DomElementInterface
     public function before(DomElementInterface $element)
     {
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument);
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -232,7 +226,6 @@ class DomElement implements DomElementInterface
     public function after(DomElementInterface $element): void
     {
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument->nextSibling);
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -243,7 +236,6 @@ class DomElement implements DomElementInterface
     public function append(DomElementInterface $element)
     {
         $this->DOMDocument->appendChild($element->dom());
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -260,8 +252,6 @@ class DomElement implements DomElementInterface
         } else {
             $this->DOMDocument->insertBefore($elements->dom(), $this->DOMDocument->firstChild);
         }
-
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -282,8 +272,6 @@ class DomElement implements DomElementInterface
         foreach ($nodes as $node) {
             $this->dom()->removeChild($node);
         }
-
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -292,7 +280,6 @@ class DomElement implements DomElementInterface
     public function remove()
     {
         $this->dom()->parentNode->removeChild($this->dom());
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -301,7 +288,6 @@ class DomElement implements DomElementInterface
     public function replace(DomElementInterface $replacement): void
     {
         $this->dom()->parentNode->replaceChild($replacement->dom(), $this->dom());
-        $this->reloadSimpleXMLStruct();
     }
 
     /**
@@ -342,6 +328,8 @@ class DomElement implements DomElementInterface
      */
     private function xPathToCollection(string $xpath): DomCollection
     {
+        $this->reloadSimpleXMLStruct();
+
         $collection = collect($this->sxmlDocument->xpath($xpath))
             ->map(Closure::fromCallable([$this, 'convertSimpleXmlToDomElement']))
             ->toArray();
