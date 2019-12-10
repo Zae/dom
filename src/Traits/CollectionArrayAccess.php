@@ -29,7 +29,7 @@ trait CollectionArrayAccess
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->elements[$offset]);
     }
@@ -69,7 +69,7 @@ trait CollectionArrayAccess
      * @since 5.0.0
      * @throws \Exception
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (!$value instanceof DomElementInterface) {
             throw new RuntimeException('You can only insert DomElementInterface elements');
@@ -90,7 +90,7 @@ trait CollectionArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->elements[$offset]->remove();
         unset($this->elements[$offset]);
