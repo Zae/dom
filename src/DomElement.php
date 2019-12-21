@@ -181,11 +181,11 @@ class DomElement implements DomElementInterface
 
     /**
      * @param string $name
-     * @param null   $value
+     * @param string $value
      *
      * @return DomElement
      */
-    public function create(string $name, $value = null): self
+    public function create(string $name, ?string $value = null): self
     {
         if ($value === null) {
             $elem = $this->DOMDocument->createElement($name);
@@ -199,9 +199,9 @@ class DomElement implements DomElementInterface
     /**
      * @param DomElementInterface $elem
      *
-     * @return mixed|void
+     * @return void
      */
-    public function wrap(DomElementInterface $elem)
+    public function wrap(DomElementInterface $elem): void
     {
         $this->getParent()->dom()->replaceChild($elem->dom(), $this->dom());
 
@@ -211,9 +211,9 @@ class DomElement implements DomElementInterface
     /**
      * @param DomElementInterface $element
      *
-     * @return mixed|void
+     * @return void
      */
-    public function before(DomElementInterface $element)
+    public function before(DomElementInterface $element): void
     {
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument);
     }
@@ -221,7 +221,7 @@ class DomElement implements DomElementInterface
     /**
      * @param DomElementInterface $element
      *
-     * @return mixed|void
+     * @return void
      */
     public function after(DomElementInterface $element): void
     {
@@ -231,9 +231,9 @@ class DomElement implements DomElementInterface
     /**
      * @param DomElementInterface $element
      *
-     * @return mixed|void
+     * @return void
      */
-    public function append(DomElementInterface $element)
+    public function append(DomElementInterface $element): void
     {
         $this->DOMDocument->appendChild($element->dom());
     }
@@ -241,7 +241,7 @@ class DomElement implements DomElementInterface
     /**
      * @param DomInterface $elements
      *
-     * @return mixed|void
+     * @return void
      */
     public function prepend(DomInterface $elements): void
     {
@@ -255,9 +255,9 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @return mixed|void
+     * @return void
      */
-    public function empty()
+    public function empty(): void
     {
         /*
          * First we copy the nodes from the nodeCollection to an array,
@@ -275,9 +275,9 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @return mixed|void
+     * @return void
      */
-    public function remove()
+    public function remove(): void
     {
         $this->dom()->parentNode->removeChild($this->dom());
     }

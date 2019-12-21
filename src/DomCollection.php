@@ -100,9 +100,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     *
+     * @return void
      */
-    public function remove()
+    public function remove(): void
     {
         $this->elements->each(static function (DomInterface $element) {
             $element->remove();
@@ -171,8 +171,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
 
     /**
      * @param DomElementInterface $wrapper
+     * @return void
      */
-    public function wrap(DomElementInterface $wrapper)
+    public function wrap(DomElementInterface $wrapper): void
     {
         $this->elements->each(static function (DomElementInterface $element) use ($wrapper) {
             $element->wrap($wrapper);
@@ -181,8 +182,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
 
     /**
      * @param DomElementInterface $elem
+     * @return void
      */
-    public function before(DomElementInterface $elem)
+    public function before(DomElementInterface $elem): void
     {
         $this->elements->each(static function (DomElementInterface $element) use ($elem) {
             $element->before($elem);
@@ -201,8 +203,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
 
     /**
      * @param DomElementInterface $elem
+     * @return void
      */
-    public function append(DomElementInterface $elem)
+    public function append(DomElementInterface $elem): void
     {
         $this->elements->each(static function (DomElementInterface $element) use ($elem) {
             $element->append($elem);
@@ -228,9 +231,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     *
+     * @return void
      */
-    public function empty()
+    public function empty(): void
     {
         $this->elements->each(static function (DomInterface $element) {
             $element->empty();

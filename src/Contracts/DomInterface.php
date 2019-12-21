@@ -42,14 +42,14 @@ interface DomInterface
     public function nextSiblings(): DomCollection;
 
     /**
-     * @return mixed
+     * @return void
      */
-    public function empty();
+    public function empty(): void;
 
     /**
-     * @return mixed
+     * @return void
      */
-    public function remove();
+    public function remove(): void;
 
     /**
      * @return string
@@ -59,16 +59,16 @@ interface DomInterface
     /**
      * @param DomElementInterface $elem
      *
-     * @return mixed
+     * @return void
      */
-    public function wrap(DomElementInterface $elem);
+    public function wrap(DomElementInterface $elem): void;
 
     /**
      * @param DomElementInterface $element
      *
-     * @return mixed
+     * @return void
      */
-    public function before(DomElementInterface $element);
+    public function before(DomElementInterface $element): void;
 
     /**
      * @param DomElementInterface $element
@@ -78,9 +78,9 @@ interface DomInterface
     /**
      * @param DomElementInterface $element
      *
-     * @return mixed
+     * @return void
      */
-    public function append(DomElementInterface $element);
+    public function append(DomElementInterface $element): void;
 
     /**
      * @param DomInterface $element
