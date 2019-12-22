@@ -83,7 +83,7 @@ interface DomInterface
     public function append(DomElementInterface $element): void;
 
     /**
-     * @param DomInterface $element
+     * @param DomElementInterface|DomCollectionInterface $element
      */
-    public function prepend(DomInterface $element): void;
+    public function prepend($element): void;
 }

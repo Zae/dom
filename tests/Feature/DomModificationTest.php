@@ -146,6 +146,37 @@ HTML;
     }
 
     /**
+     * @test
+     * @group modify
+     */
+    public function it_can_put_elements_before_root(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $parent = $doc->find('.parent');
+        $first = $doc->find('.firstchild')->first();
+        $parent->before($first);
+
+        $this->assertEquals("<div class=\"firstchild\"></div><div class=\"parent\"><div class=\"lastchild\"></div></div>\n", (string)$doc);
+    }
+
+    /**
+     * @test
+     * @group modify
+     */
+    public function it_can_only_load_on_root(): void
+    {
+        $this->expectExceptionMessage('You can only loadString on a root instance.');
+        $this->expectException(\Exception::class);
+
+        $doc = new DomElement();
+
+        $a = $doc->create('a');
+        $a->loadString('ASD');
+    }
+
+    /**
      * Find any <figure>'s that are wrapped in <em>'s and move them to be a sibling of the <em>, this way the
      * HTMLPurifier won't try to fix the nesting of the <em>.
      *

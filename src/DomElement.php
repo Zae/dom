@@ -6,17 +6,18 @@ namespace Zae\DOM;
 use Closure;
 use DOMDocument;
 use DOMNode;
+use Exception;
 use SimpleXMLElement;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Zae\DOM\Contracts\DomCollectionInterface;
 use Zae\DOM\Contracts\DomElementInterface;
-use Zae\DOM\Contracts\DomInterface;
 use Zae\DOM\Traits\Stringable;
 
 /**
  * Class DomElement
  *
  * @package Zae\DOM
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class DomElement implements DomElementInterface
 {
@@ -28,7 +29,7 @@ class DomElement implements DomElementInterface
     private $selectorConverter;
 
     /**
-     * @var DOMDocument
+     * @var DOMDocument|\DOMElement|DOMNode
      */
     private $DOMDocument;
 
@@ -55,9 +56,14 @@ class DomElement implements DomElementInterface
      * @param string $string
      *
      * @return DomElement
+     * @throws Exception
      */
     public function loadString(string $string): self
     {
+        if (!$this->DOMDocument instanceof DOMDocument) {
+            throw new Exception('You can only loadString on a root instance.');
+        }
+
         libxml_use_internal_errors(true);
         $this->DOMDocument->loadHTML(
             mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
@@ -72,9 +78,14 @@ class DomElement implements DomElementInterface
      * @param string $path
      *
      * @return DomElement
+     * @throws Exception
      */
     public function loadHTML(string $path): self
     {
+        if (!$this->DOMDocument instanceof DOMDocument) {
+            throw new Exception('You can only loadHTML on a root instance.');
+        }
+
         libxml_use_internal_errors(true);
         $this->DOMDocument->loadHTMLFile($path, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_use_internal_errors(false);
@@ -86,13 +97,20 @@ class DomElement implements DomElementInterface
      * @param SimpleXMLElement $element
      *
      * @return DomElement
+     * @throws Exception
      */
     protected function loadSimpleXML(SimpleXMLElement $element): self
     {
         $this->sxmlDocument = $element;
         libxml_use_internal_errors(true);
-        $this->DOMDocument = dom_import_simplexml($this->sxmlDocument);
+        $dom = dom_import_simplexml($this->sxmlDocument);
         libxml_use_internal_errors(false);
+
+        if (!$dom) {
+            throw new Exception('Unable to load XML structure into DOM');
+        }
+
+        $this->DOMDocument = $dom;
 
         return $this;
     }
@@ -144,14 +162,16 @@ class DomElement implements DomElementInterface
     {
         $selffound = false;
         $prev = [];
-        foreach ($this->DOMDocument->parentNode->childNodes as $child) {
-            if ($child === $this->DOMDocument) {
-                $selffound = true;
-                continue;
-            }
+        if (!empty($this->DOMDocument->parentNode->childNodes)) {
+            foreach ($this->DOMDocument->parentNode->childNodes as $child) {
+                if ($child === $this->DOMDocument) {
+                    $selffound = true;
+                    continue;
+                }
 
-            if (!$selffound) {
-                $prev[] = new DomElement($this->selectorConverter, $child);
+                if (!$selffound) {
+                    $prev[] = new DomElement($this->selectorConverter, $child);
+                }
             }
         }
 
@@ -165,14 +185,17 @@ class DomElement implements DomElementInterface
     {
         $selffound = false;
         $next = [];
-        foreach ($this->DOMDocument->parentNode->childNodes as $child) {
-            if ($child === $this->DOMDocument) {
-                $selffound = true;
-                continue;
-            }
 
-            if ($selffound) {
-                $next[] = new DomElement($this->selectorConverter, $child);
+        if (!empty($this->DOMDocument->parentNode->childNodes)) {
+            foreach ($this->DOMDocument->parentNode->childNodes as $child) {
+                if ($child === $this->DOMDocument) {
+                    $selffound = true;
+                    continue;
+                }
+
+                if ($selffound) {
+                    $next[] = new DomElement($this->selectorConverter, $child);
+                }
             }
         }
 
@@ -184,9 +207,14 @@ class DomElement implements DomElementInterface
      * @param string $value
      *
      * @return DomElement
+     * @throws Exception
      */
     public function create(string $name, ?string $value = null): self
     {
+        if (!$this->DOMDocument instanceof DOMDocument) {
+            throw new Exception('You can only call create on a root instance');
+        }
+
         if ($value === null) {
             $elem = $this->DOMDocument->createElement($name);
         } else {
@@ -212,9 +240,14 @@ class DomElement implements DomElementInterface
      * @param DomElementInterface $element
      *
      * @return void
+     * @throws Exception
      */
     public function before(DomElementInterface $element): void
     {
+        if (empty($this->DOMDocument->parentNode)) {
+            throw new Exception('Impossible to put elements before the root');
+        }
+
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument);
     }
 
@@ -222,9 +255,14 @@ class DomElement implements DomElementInterface
      * @param DomElementInterface $element
      *
      * @return void
+     * @throws Exception
      */
     public function after(DomElementInterface $element): void
     {
+        if (empty($this->DOMDocument->parentNode)) {
+            throw new Exception('Impossible to put elements after the root');
+        }
+
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument->nextSibling);
     }
 
@@ -239,14 +277,14 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @param DomInterface $elements
+     * @param DomElementInterface|DomCollectionInterface $elements
      *
      * @return void
      */
-    public function prepend(DomInterface $elements): void
+    public function prepend($elements): void
     {
         if ($elements instanceof DomCollectionInterface) {
-            $elements->each(function (DomInterface $elem) {
+            $elements->each(function (DomElementInterface $elem) {
                 $this->DOMDocument->insertBefore($elem->dom(), $this->DOMDocument->firstChild);
             });
         } else {
@@ -341,6 +379,7 @@ class DomElement implements DomElementInterface
      * @param SimpleXMLElement $element
      *
      * @return DomElement
+     * @throws Exception
      */
     private function convertSimpleXmlToDomElement(SimpleXMLElement $element): DomElement
     {

@@ -213,12 +213,12 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @param DomInterface $elements
+     * @param DomElementInterface|DomCollectionInterface $elements
      */
-    public function prepend(DomInterface $elements): void
+    public function prepend($elements): void
     {
         if ($elements instanceof DomCollectionInterface) {
-            $elements->each(function ($elem) {
+            $elements->each(function (DomElementInterface $elem) {
                 $this->elements->each(static function (DomElementInterface $element) use ($elem) {
                     $element->prepend($elem);
                 });
@@ -259,9 +259,17 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     public function merge(DomCollectionInterface $collection): DomCollection
     {
         return new static(
-            $collection->elements->merge($this->elements)->toArray(),
+            $collection->elements()->merge($this->elements)->toArray(),
             $this->selectorConverter
         );
+    }
+
+    /**
+     * @return Collection
+     */
+    public function elements(): Collection
+    {
+        return $this->elements;
     }
 
     /**

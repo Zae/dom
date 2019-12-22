@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Zae\DOM\Contracts;
 
+use Illuminate\Support\Collection;
 use Zae\DOM\DomCollection;
 
 /**
@@ -35,4 +36,9 @@ interface DomCollectionInterface extends DomInterface
      * @return DomInterface
      */
     public function first(): DomInterface;
+
+    /**
+     * @return Collection
+     */
+    public function elements(): Collection;
 }
