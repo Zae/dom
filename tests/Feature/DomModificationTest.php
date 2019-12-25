@@ -162,21 +162,6 @@ HTML;
     }
 
     /**
-     * @test
-     * @group modify
-     */
-    public function it_can_only_load_on_root(): void
-    {
-        $this->expectExceptionMessage('You can only loadString on a root instance.');
-        $this->expectException(\Exception::class);
-
-        $doc = new DomElement();
-
-        $a = $doc->create('a');
-        $a->loadString('ASD');
-    }
-
-    /**
      * Find any <figure>'s that are wrapped in <em>'s and move them to be a sibling of the <em>, this way the
      * HTMLPurifier won't try to fix the nesting of the <em>.
      *
