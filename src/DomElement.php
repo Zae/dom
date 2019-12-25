@@ -227,61 +227,69 @@ class DomElement implements DomElementInterface
     /**
      * @param DomElementInterface $elem
      *
-     * @return void
+     * @return self
      */
-    public function wrap(DomElementInterface $elem): void
+    public function wrap(DomElementInterface $elem): self
     {
         $this->getParent()->dom()->replaceChild($elem->dom(), $this->dom());
 
         $elem->append($this);
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $element
      *
-     * @return void
+     * @return self
      * @throws Exception
      */
-    public function before(DomElementInterface $element): void
+    public function before(DomElementInterface $element): self
     {
         if (empty($this->DOMDocument->parentNode)) {
             throw new Exception('Impossible to put elements before the root');
         }
 
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument);
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $element
      *
-     * @return void
+     * @return self
      * @throws Exception
      */
-    public function after(DomElementInterface $element): void
+    public function after(DomElementInterface $element): self
     {
         if (empty($this->DOMDocument->parentNode)) {
             throw new Exception('Impossible to put elements after the root');
         }
 
         $this->DOMDocument->parentNode->insertBefore($element->dom(), $this->DOMDocument->nextSibling);
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $element
      *
-     * @return void
+     * @return self
      */
-    public function append(DomElementInterface $element): void
+    public function append(DomElementInterface $element): self
     {
         $this->DOMDocument->appendChild($element->dom());
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface|DomCollectionInterface $elements
      *
-     * @return void
+     * @return self
      */
-    public function prepend($elements): void
+    public function prepend($elements): self
     {
         if ($elements instanceof DomCollectionInterface) {
             $elements->each(function (DomElementInterface $elem) {
@@ -290,12 +298,14 @@ class DomElement implements DomElementInterface
         } else {
             $this->DOMDocument->insertBefore($elements->dom(), $this->DOMDocument->firstChild);
         }
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return self
      */
-    public function empty(): void
+    public function empty(): self
     {
         /*
          * First we copy the nodes from the nodeCollection to an array,
@@ -310,22 +320,30 @@ class DomElement implements DomElementInterface
         foreach ($nodes as $node) {
             $this->dom()->removeChild($node);
         }
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return self
      */
-    public function remove(): void
+    public function remove(): self
     {
         $this->dom()->parentNode->removeChild($this->dom());
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $replacement
+     *
+     * @return self
      */
-    public function replace(DomElementInterface $replacement): void
+    public function replace(DomElementInterface $replacement): self
     {
         $this->dom()->parentNode->replaceChild($replacement->dom(), $this->dom());
+
+        return $this;
     }
 
     /**

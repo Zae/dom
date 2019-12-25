@@ -18,12 +18,13 @@ interface DomElementInterface extends DomInterface
     public function dom(): DOMNode;
 
     /**
-     * @return DomElementInterface
+     * @return self
      */
     public function getParent(): self;
 
     /**
      * @param self $replacement
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function replace(self $replacement): void;
+    public function replace(self $replacement);
 }

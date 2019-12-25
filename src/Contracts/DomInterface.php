@@ -42,14 +42,14 @@ interface DomInterface
     public function nextSiblings(): DomCollection;
 
     /**
-     * @return void
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function empty(): void;
+    public function empty();
 
     /**
-     * @return void
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function remove(): void;
+    public function remove();
 
     /**
      * @return string
@@ -59,31 +59,35 @@ interface DomInterface
     /**
      * @param DomElementInterface $elem
      *
-     * @return void
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function wrap(DomElementInterface $elem): void;
+    public function wrap(DomElementInterface $elem);
 
     /**
      * @param DomElementInterface $element
      *
-     * @return void
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function before(DomElementInterface $element): void;
-
-    /**
-     * @param DomElementInterface $element
-     */
-    public function after(DomElementInterface $element): void;
+    public function before(DomElementInterface $element);
 
     /**
      * @param DomElementInterface $element
      *
-     * @return void
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function append(DomElementInterface $element): void;
+    public function after(DomElementInterface $element);
+
+    /**
+     * @param DomElementInterface $element
+     *
+     * @return DomElementInterface|DomCollectionInterface
+     */
+    public function append(DomElementInterface $element);
 
     /**
      * @param DomElementInterface|DomCollectionInterface $element
+     *
+     * @return DomElementInterface|DomCollectionInterface
      */
-    public function prepend($element): void;
+    public function prepend($element);
 }

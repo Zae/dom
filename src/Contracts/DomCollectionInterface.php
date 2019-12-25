@@ -29,8 +29,9 @@ interface DomCollectionInterface extends DomInterface
 
     /**
      * @param callable $callback
+     * @return DomCollectionInterface
      */
-    public function each(callable $callback): void;
+    public function each(callable $callback);
 
     /**
      * @return DomInterface

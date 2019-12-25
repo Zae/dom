@@ -80,13 +80,15 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     /**
      * @param callable $callback
      *
-     * @return void
+     * @return self
      */
-    public function each(callable $callback): void
+    public function each(callable $callback): self
     {
         $this
             ->elements
             ->each($callback);
+
+        return $this;
     }
 
     /**
@@ -100,13 +102,15 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @return void
+     * @return self
      */
-    public function remove(): void
+    public function remove(): self
     {
         $this->elements->each(static function (DomInterface $element) {
             $element->remove();
         });
+
+        return $this;
     }
 
     /**
@@ -142,9 +146,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @return DomCollection
+     * @return self
      */
-    public function precedingSiblings(): DomCollection
+    public function precedingSiblings(): self
     {
         return $this->elements->map(static function (DomInterface $element) {
             return $element->precedingSiblings();
@@ -156,9 +160,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @return DomCollection
+     * @return self
      */
-    public function nextSiblings(): DomCollection
+    public function nextSiblings(): self
     {
         return $this->elements->map(static function (DomInterface $element) {
             return $element->nextSiblings();
@@ -171,51 +175,63 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
 
     /**
      * @param DomElementInterface $wrapper
-     * @return void
+     * @return self
      */
-    public function wrap(DomElementInterface $wrapper): void
+    public function wrap(DomElementInterface $wrapper): self
     {
         $this->elements->each(static function (DomElementInterface $element) use ($wrapper) {
             $element->wrap($wrapper);
         });
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $elem
-     * @return void
+     * @return self
      */
-    public function before(DomElementInterface $elem): void
+    public function before(DomElementInterface $elem): self
     {
         $this->elements->each(static function (DomElementInterface $element) use ($elem) {
             $element->before($elem);
         });
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $elem
+     *
+     * @return self
      */
-    public function after(DomElementInterface $elem): void
+    public function after(DomElementInterface $elem): self
     {
         $this->elements->each(static function (DomElementInterface $element) use ($elem) {
             $element->after($elem);
         });
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface $elem
-     * @return void
+     * @return self
      */
-    public function append(DomElementInterface $elem): void
+    public function append(DomElementInterface $elem): self
     {
         $this->elements->each(static function (DomElementInterface $element) use ($elem) {
             $element->append($elem);
         });
+
+        return $this;
     }
 
     /**
      * @param DomElementInterface|DomCollectionInterface $elements
+     *
+     * @return self
      */
-    public function prepend($elements): void
+    public function prepend($elements): self
     {
         if ($elements instanceof DomCollectionInterface) {
             $elements->each(function (DomElementInterface $elem) {
@@ -228,16 +244,20 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
                 $element->prepend($elements);
             });
         }
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return self
      */
-    public function empty(): void
+    public function empty(): self
     {
         $this->elements->each(static function (DomInterface $element) {
             $element->empty();
         });
+
+        return $this;
     }
 
     /**
