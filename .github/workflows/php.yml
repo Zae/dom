@@ -43,3 +43,6 @@ jobs:
 
       - name: Run test suite
         run: php vendor/bin/phpunit --coverage-text
+
+      - name: Run infection suite
+        run: php vendor/bin/infection -j4 --only-covered --min-covered-msi=100

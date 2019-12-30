@@ -24,6 +24,7 @@ class DomModificationTest extends TestCase
 HTML;
 
     const html3 = '<div class="parent"><div class="firstchild"></div><div class="lastchild"></div></div>';
+    const html4 = '<div class="parent"><div class="firstchild"></div><div class="middlechild"></div><div class="lastchild"></div></div>';
 
     /**
      * @test
@@ -76,13 +77,29 @@ HTML;
     public function it_can_find_preceding(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(static::html4);
 
-        $last = $doc->find('.lastchild');
+        $last = $doc->find('.middlechild');
 
         $preceding = $last->precedingSiblings();
 
-        $this->assertStringContainsString('<div class="firstchild"></div>', (string)$preceding);
+        $this->assertEquals('<div class="firstchild"></div>' . PHP_EOL, (string)$preceding);
+    }
+
+    /**
+     * @test
+     * @group modify
+     */
+    public function it_can_find_next(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html4);
+
+        $last = $doc->find('.middlechild');
+
+        $preceding = $last->nextSiblings();
+
+        $this->assertEquals('<div class="lastchild"></div>' . PHP_EOL, (string)$preceding);
     }
 
     /**
@@ -159,6 +176,20 @@ HTML;
         $parent->before($first);
 
         $this->assertEquals("<div class=\"firstchild\"></div><div class=\"parent\"><div class=\"lastchild\"></div></div>\n", (string)$doc);
+    }
+
+    /**
+     * @test
+     * @group modify
+     */
+    public function it_can_remove_elements(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $doc->find('.firstchild')->remove();
+
+        $this->assertEquals("<div class=\"parent\"><div class=\"lastchild\"></div></div>\n", (string)$doc);
     }
 
     /**

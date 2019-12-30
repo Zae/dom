@@ -48,7 +48,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     public function __construct(array $elements = [], ?CssSelectorConverter $selectorConverter = null)
     {
         $this->elements = collect($elements);
-        $this->selectorConverter = $selectorConverter ?? new CssSelectorConverter();
+        $this->selectorConverter = $selectorConverter ?? new CssSelectorConverter(true);
     }
 
     /**

@@ -48,7 +48,7 @@ class DomElement implements DomElementInterface
         ?CssSelectorConverter $selectorConverter = null,
         ?DOMNode $DOMDocument = null
     ) {
-        $this->selectorConverter = $selectorConverter ?? new CssSelectorConverter();
+        $this->selectorConverter = $selectorConverter ?? new CssSelectorConverter(true);
         $this->DOMDocument = $DOMDocument ?? new DOMDocument();
     }
 
@@ -64,12 +64,12 @@ class DomElement implements DomElementInterface
             throw new Exception('You can only loadString on a root instance.');
         }
 
-        libxml_use_internal_errors(true);
+        $use_errors = libxml_use_internal_errors(true);
         $this->DOMDocument->loadHTML(
             mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
         );
-        libxml_use_internal_errors(false);
+        libxml_use_internal_errors($use_errors);
 
         return $this;
     }
@@ -86,31 +86,9 @@ class DomElement implements DomElementInterface
             throw new Exception('You can only loadHTML on a root instance.');
         }
 
-        libxml_use_internal_errors(true);
+        $use_errors = libxml_use_internal_errors(true);
         $this->DOMDocument->loadHTMLFile($path, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        libxml_use_internal_errors(false);
-
-        return $this;
-    }
-
-    /**
-     * @param SimpleXMLElement $element
-     *
-     * @return DomElement
-     * @throws Exception
-     */
-    protected function loadSimpleXML(SimpleXMLElement $element): self
-    {
-        $this->sxmlDocument = $element;
-        libxml_use_internal_errors(true);
-        $dom = dom_import_simplexml($this->sxmlDocument);
-        libxml_use_internal_errors(false);
-
-        if (!$dom) {
-            throw new Exception('Unable to load XML structure into DOM');
-        }
-
-        $this->DOMDocument = $dom;
+        libxml_use_internal_errors($use_errors);
 
         return $this;
     }
@@ -160,18 +138,14 @@ class DomElement implements DomElementInterface
      */
     public function precedingSiblings(): DomCollection
     {
-        $selffound = false;
         $prev = [];
         if (!empty($this->DOMDocument->parentNode->childNodes)) {
             foreach ($this->DOMDocument->parentNode->childNodes as $child) {
                 if ($child === $this->DOMDocument) {
-                    $selffound = true;
-                    continue;
+                    break;
                 }
 
-                if (!$selffound) {
-                    $prev[] = new DomElement($this->selectorConverter, $child);
-                }
+                $prev[] = new DomElement($this->selectorConverter, $child);
             }
         }
 
@@ -391,6 +365,28 @@ class DomElement implements DomElementInterface
             ->toArray();
 
         return new DomCollection($collection, $this->selectorConverter);
+    }
+
+    /**
+     * @param SimpleXMLElement $element
+     *
+     * @return DomElement
+     * @throws Exception
+     */
+    private function loadSimpleXML(SimpleXMLElement $element): self
+    {
+        $this->sxmlDocument = $element;
+        $use_errors = libxml_use_internal_errors(true);
+        $dom = dom_import_simplexml($this->sxmlDocument);
+        libxml_use_internal_errors($use_errors);
+
+        if (!$dom) {
+            throw new Exception('Unable to load XML structure into DOM');
+        }
+
+        $this->DOMDocument = $dom;
+
+        return $this;
     }
 
     /**

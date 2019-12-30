@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Zae\DOM\Tests\Feature;
 
+use Symfony\Component\CssSelector\CssSelectorConverter;
+use Symfony\Component\CssSelector\Exception\ExpressionErrorException;
+use Zae\DOM\DomCollection;
 use Zae\DOM\DomElement;
 use Zae\DOM\Tests\TestCase;
 
@@ -99,6 +102,52 @@ HTML;
         $doc->loadHTML(__DIR__ . '/../assets/captions.html');
 
         $this->assertEquals(static::$html, (string)$doc);
+    }
+
+    /**
+     * @test
+     * @group pseudo
+     */
+    public function it_can_use_pseudo_selectors(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString('<div><a href="#">LINK</a></div>');
+
+        $link = $doc->find('*:link');
+
+        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
+    }
+
+    /**
+     * @test
+     * @group pseudo
+     */
+    public function it_can_use_pseudo_selectors_in_collection(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+        $els = $doc->find('.parent')->elements()->toArray();
+
+        $col = (new DomCollection($els))[0];
+
+        $col->find('*:link');
+    }
+
+    /**
+     * @test
+     * @group pseudo
+     */
+    public function it_can_use_pseudo_selectors_only_when_requested(): void
+    {
+        $this->expectException(ExpressionErrorException::class);
+        $this->expectErrorMessage('Pseudo-class "link" not supported.');
+
+        $doc = new DomElement(new CssSelectorConverter(false));
+        $doc->loadString('<div><a href="#">LINK</a></div>');
+
+        $link = $doc->find('*:link');
+
+        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
     }
 
     /**
