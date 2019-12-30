@@ -27,7 +27,7 @@ jobs:
         uses: shivammathur/setup-php@master
         with:
           php-version: ${{ matrix.php-version }}
-          coverage: none
+          coverage: pcov
       - name: Check PHP Version
         run: php -v
       - name: Check Composer Version
