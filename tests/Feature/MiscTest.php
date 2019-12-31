@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Zae\DOM\Tests\Feature;
 
 use Symfony\Component\CssSelector\CssSelectorConverter;
+use Zae\DOM\DomCollection;
 use Zae\DOM\DomElement;
 use Zae\DOM\Tests\TestCase;
 
@@ -34,19 +35,80 @@ class MiscTest extends TestCase
     /**
      * @test
      * @group modify
+     * @dataProvider chainCollection
      */
-    public function it_can_chain(): void
+    public function collections_can_chain($func, $type, $class, string $selector = null, $val1 = null, $val2 = null): void
     {
         $doc = new DomElement();
         $doc->loadString(static::html3);
 
-        $first = $doc->find('.firstchild')->first();
-        $last = $doc->find('.lastchild')->first();
-        $doc->find('.parent')
-            ->wrap($first)
-            ->wrap($last);
+        if ($selector !== null) {
+            $selected = $doc->find($selector)->first();
+            $found = $doc->find('.parent')->{$func}($selected);
+        } elseif($val1 !== null && $val2 !== null) {
+            $found = $doc->find('.parent')->{$func}($val1, $val2);
+        } elseif($val1 !== null) {
+            $found = $doc->find('.parent')->{$func}($val1);
+        } else {
+            $found = $doc->find('.parent')->{$func}();
+        }
 
-        $this->assertEquals("<div class=\"firstchild\"><div class=\"lastchild\"><div class=\"parent\"></div></div></div>\n", (string)$doc);
+        $this->assertEquals($type, gettype($found));
+        if ($type === 'object') {
+            $this->assertEquals($class, get_class($found));
+        }
+    }
+
+    /**
+     * @test
+     * @group modify
+     * @dataProvider chainElement
+     */
+    public function elements_can_chain($func, $type, $class, string $selector = null, $val1 = null, $val2 = null): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        if ($selector !== null) {
+            $selected = $doc->find($selector)->first();
+            $found = $doc->find('.parent')->first()->{$func}($selected);
+        } elseif($val1 !== null && $val2 !== null) {
+            $found = $doc->find('.parent')->first()->{$func}($val1, $val2);
+        } elseif($val1 !== null) {
+            $found = $doc->find('.parent')->first()->{$func}($val1);
+        } else {
+            $found = $doc->find('.parent')->first()->{$func}();
+        }
+
+        $this->assertEquals($type, gettype($found));
+        if ($type === 'object') {
+            $this->assertEquals($class, get_class($found));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function chainCollection(): array
+    {
+        return [
+            ['first', 'object', DomElement::class, null],
+            ['wrap', 'object', DomCollection::class, '.firstchild'],
+            ['attr', 'string', null, null, 'class'],
+            ['attr', 'object', DomCollection::class, null, 'bar', 'baz'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function chainElement(): array
+    {
+        return [
+            ['wrap', 'object', DomElement::class, '.firstchild'],
+            ['attr', 'string', null, null, 'class'],
+            ['attr', 'object', DomElement::class, null, 'bar', 'baz'],
+        ];
     }
 
     /**
@@ -120,5 +182,61 @@ class MiscTest extends TestCase
 
         $dom = new \DOMDocument();
         $dom->loadHTML('<>aa<>aa<a>');
+    }
+
+    /**
+     * @test
+     */
+    public function it_sets_attributes()
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $parent = $doc->find('.parent')->first();
+        $parent->attr('foo', 'bar');
+
+        $this->assertEquals("<div class=\"parent\" foo=\"bar\"><div class=\"firstchild\"></div><div class=\"lastchild\"></div></div>\n", (string)$doc);
+    }
+
+    /**
+     * @test
+     */
+    public function it_gets_attributes()
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $parent = $doc->find('.parent')->first();
+        $class = $parent->attr('class');
+
+        $this->assertEquals('parent', $class);
+    }
+
+    /**
+     * @test
+     */
+    public function it_sets_attributes_on_collections()
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $collection = $doc->find('div');
+        $collection->attr('foo', 'bar');
+
+        $this->assertEquals("<div class=\"parent\" foo=\"bar\"><div class=\"firstchild\" foo=\"bar\"></div><div class=\"lastchild\" foo=\"bar\"></div></div>\n", (string)$doc);
+    }
+
+    /**
+     * @test
+     */
+    public function it_get_attributes_from_collections()
+    {
+        $doc = new DomElement();
+        $doc->loadString(static::html3);
+
+        $collection = $doc->find('div');
+        $class = $collection->attr('class');
+
+        $this->assertEquals('parent', $class);
     }
 }

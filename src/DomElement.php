@@ -352,6 +352,23 @@ class DomElement implements DomElementInterface
     }
 
     /**
+     * @param string $name
+     * @param null   $value
+     *
+     * @return $this|string
+     */
+    public function attr(string $name, $value = null)
+    {
+        if ($value === null) {
+            return $this->DOMDocument->getAttribute($name);
+        }
+        
+        $this->DOMDocument->setAttribute($name, $value);
+        
+        return $this;
+    }
+
+    /**
      * @param string $xpath
      *
      * @return DomCollection

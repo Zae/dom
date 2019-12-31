@@ -90,4 +90,12 @@ interface DomInterface
      * @return DomElementInterface|DomCollectionInterface
      */
     public function prepend($element);
+
+    /**
+     * @param string $name
+     * @param null   $value
+     *
+     * @return DomElementInterface|DomCollectionInterface|string
+     */
+    public function attr(string $name, $value = null);
 }

@@ -125,12 +125,14 @@ HTML;
     public function it_can_use_pseudo_selectors_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
-        $els = $doc->find('.parent')->elements()->toArray();
+        $doc->loadString('<div><a href="#">LINK</a></div>');
+        $els = $doc->find('div')->elements()->toArray();
 
         $col = (new DomCollection($els))[0];
 
-        $col->find('*:link');
+        $link = $col->find('*:link');
+
+        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
     }
 
     /**

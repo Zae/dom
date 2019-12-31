@@ -293,6 +293,24 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
+     * @param string $name
+     * @param null   $value
+     *
+     * @return $this|string
+     */
+    public function attr(string $name, $value = null)
+    {
+        if ($value === null) {
+            return $this->first()->attr($name);
+        }
+
+        foreach ($this->elements as $element) {
+            $element->attr($name, $value);
+        }
+
+        return $this;
+    }
+    /**
      * @param DomCollection $collection
      * @param DomCollection $initial
      *
