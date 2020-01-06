@@ -34,7 +34,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit -vvv --testdox",
         "psalm": "vendor/bin/psalm",
-        "test-coverage": "@php -dpcov.enabled=1 -dpcov.directory=src -dpcov.exclude=~vendor~ vendor/bin/phpunit --coverage-text",
+        "test-coverage": "@php -dpcov.enabled=1 -dpcov.directory=src -dpcov.exclude=~vendor~ vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml",
         "infection": "vendor/bin/infection -j4 --only-covered --min-covered-msi=100"
     },
     "config": {

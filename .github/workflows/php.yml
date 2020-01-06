@@ -42,7 +42,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --ignore-platform-reqs
 
       - name: Run test suite
-        run: php vendor/bin/phpunit --coverage-text
+        run: composer run test-coverage
 
       - name: Run infection suite
-        run: php vendor/bin/infection -j4 --only-covered --min-covered-msi=100
+        run: composer run infection
+
+      - name: CodeCov
+        uses: codecov/codecov-action@v1.0.5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} #required
+          file: ./clover.xml #optional
