@@ -68,9 +68,9 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @return DomInterface
+     * @return ?DomInterface
      */
-    public function first(): DomInterface
+    public function first(): ?DomInterface
     {
         return $this
             ->elements
@@ -296,12 +296,18 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
      * @param string $name
      * @param null   $value
      *
-     * @return $this|string
+     * @return $this|string|null
      */
     public function attr(string $name, $value = null)
     {
         if ($value === null) {
-            return $this->first()->attr($name);
+            $first = $this->first();
+
+            if ($first) {
+                return $first->attr($name);
+            }
+
+            return null;
         }
 
         foreach ($this->elements as $element) {

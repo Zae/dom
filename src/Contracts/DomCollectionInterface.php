@@ -34,9 +34,9 @@ interface DomCollectionInterface extends DomInterface
     public function each(callable $callback);
 
     /**
-     * @return DomInterface
+     * @return DomInterface|null
      */
-    public function first(): DomInterface;
+    public function first(): ?DomInterface;
 
     /**
      * @return Collection
