@@ -8,7 +8,7 @@ use ArrayIterator;
 use Traversable;
 
 /**
- * Trait CollectionIteratorAgggregate
+ * Trait CollectionIteratorAggregate
  *
  * @package Zae\DOM
  */
