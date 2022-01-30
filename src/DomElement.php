@@ -13,6 +13,7 @@ use Symfony\Component\CssSelector\CssSelectorConverter;
 use Zae\DOM\Contracts\DomCollectionInterface;
 use Zae\DOM\Contracts\DomElementInterface;
 use Zae\DOM\Traits\Stringable;
+
 use function is_null;
 
 /**
