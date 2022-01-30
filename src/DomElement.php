@@ -65,7 +65,12 @@ class DomElement implements DomElementInterface
             throw new Exception('You can only loadString on a root instance.');
         }
 
+        if (empty($string)) {
+            throw new Exception('Empty string supplied as input');
+        }
+
         $use_errors = libxml_use_internal_errors(true);
+        /** @psalm-suppress ArgumentTypeCoercion */
         $this->DOMDocument->loadHTML(
             mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
@@ -304,7 +309,10 @@ class DomElement implements DomElementInterface
      */
     public function remove(): self
     {
-        $this->dom()->parentNode->removeChild($this->dom());
+        $parentNode = $this->dom()->parentNode;
+        if ($parentNode) {
+            $parentNode->removeChild($this->dom());
+        }
 
         return $this;
     }
@@ -316,8 +324,11 @@ class DomElement implements DomElementInterface
      */
     public function replace(DomElementInterface $replacement): self
     {
-        $this->dom()->parentNode->replaceChild($replacement->dom(), $this->dom());
+        $parentNode = $this->dom()->parentNode;
 
+        if ($parentNode) {
+            $parentNode->replaceChild($replacement->dom(), $this->dom());
+        }
         return $this;
     }
 
@@ -354,12 +365,17 @@ class DomElement implements DomElementInterface
 
     /**
      * @param string $name
-     * @param null   $value
+     * @param null $value
      *
      * @return $this|string
+     * @throws Exception
      */
     public function attr(string $name, $value = null)
     {
+        if (!($this->DOMDocument instanceof \DOMElement)) {
+            throw new Exception('This element does not support attributes');
+        }
+
         if ($value === null) {
             return $this->DOMDocument->getAttribute($name);
         }
