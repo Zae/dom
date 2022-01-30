@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Zae\DOM;
@@ -362,9 +363,9 @@ class DomElement implements DomElementInterface
         if ($value === null) {
             return $this->DOMDocument->getAttribute($name);
         }
-        
+
         $this->DOMDocument->setAttribute($name, $value);
-        
+
         return $this;
     }
 

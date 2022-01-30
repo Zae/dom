@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --ignore-platform-reqs
 
+      - name: PSR-12 Codestyle Check
+        run: ./vendor/bin/phpcs --standard=PSR12 --extensions=php src
+
       - name: Run test suite
         run: composer run test-coverage
 
