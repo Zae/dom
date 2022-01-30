@@ -14,11 +14,12 @@ use Zae\DOM\Contracts\DomCollectionInterface;
 use Zae\DOM\Contracts\DomElementInterface;
 use Zae\DOM\Traits\Stringable;
 
+use function is_null;
+
 /**
  * Class DomElement
  *
  * @package Zae\DOM
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class DomElement implements DomElementInterface
 {
@@ -35,7 +36,7 @@ class DomElement implements DomElementInterface
     private $DOMDocument;
 
     /**
-     * @var SimpleXMLElement
+     * @var ?SimpleXMLElement
      */
     private $sxmlDocument;
 
@@ -65,7 +66,12 @@ class DomElement implements DomElementInterface
             throw new Exception('You can only loadString on a root instance.');
         }
 
+        if (empty($string)) {
+            throw new Exception('Empty string supplied as input');
+        }
+
         $use_errors = libxml_use_internal_errors(true);
+        /** @psalm-suppress ArgumentTypeCoercion */
         $this->DOMDocument->loadHTML(
             mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'),
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
@@ -196,19 +202,19 @@ class DomElement implements DomElementInterface
             $elem = $this->DOMDocument->createElement($name, $value);
         }
 
-        return new static($this->selectorConverter, $elem);
+        return new self($this->selectorConverter, $elem);
     }
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      *
      * @return self
      */
-    public function wrap(DomElementInterface $elem): self
+    public function wrap(DomElementInterface $element): self
     {
-        $this->getParent()->dom()->replaceChild($elem->dom(), $this->dom());
+        $this->getParent()->dom()->replaceChild($element->dom(), $this->dom());
 
-        $elem->append($this);
+        $element->append($this);
 
         return $this;
     }
@@ -260,18 +266,18 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @param DomElementInterface|DomCollectionInterface $elements
+     * @param DomElementInterface|DomCollectionInterface $element
      *
      * @return self
      */
-    public function prepend($elements): self
+    public function prepend($element): self
     {
-        if ($elements instanceof DomCollectionInterface) {
-            $elements->each(function (DomElementInterface $elem) {
+        if ($element instanceof DomCollectionInterface) {
+            $element->each(function (DomElementInterface $elem) {
                 $this->DOMDocument->insertBefore($elem->dom(), $this->DOMDocument->firstChild);
             });
         } else {
-            $this->DOMDocument->insertBefore($elements->dom(), $this->DOMDocument->firstChild);
+            $this->DOMDocument->insertBefore($element->dom(), $this->DOMDocument->firstChild);
         }
 
         return $this;
@@ -304,7 +310,10 @@ class DomElement implements DomElementInterface
      */
     public function remove(): self
     {
-        $this->dom()->parentNode->removeChild($this->dom());
+        $parentNode = $this->dom()->parentNode;
+        if ($parentNode) {
+            $parentNode->removeChild($this->dom());
+        }
 
         return $this;
     }
@@ -316,8 +325,11 @@ class DomElement implements DomElementInterface
      */
     public function replace(DomElementInterface $replacement): self
     {
-        $this->dom()->parentNode->replaceChild($replacement->dom(), $this->dom());
+        $parentNode = $this->dom()->parentNode;
 
+        if ($parentNode) {
+            $parentNode->replaceChild($replacement->dom(), $this->dom());
+        }
         return $this;
     }
 
@@ -326,7 +338,7 @@ class DomElement implements DomElementInterface
      */
     public function getParent(): DomElementInterface
     {
-        return new static($this->selectorConverter, $this->dom()->parentNode);
+        return new self($this->selectorConverter, $this->dom()->parentNode);
     }
 
     /**
@@ -342,6 +354,7 @@ class DomElement implements DomElementInterface
             $doc = new DOMDocument();
             $node = $doc->importNode($this->DOMDocument, true);
 
+            /** @phpstan-ignore-next-line */
             if ($node) {
                 $doc->appendChild($node);
             }
@@ -354,12 +367,17 @@ class DomElement implements DomElementInterface
 
     /**
      * @param string $name
-     * @param null   $value
+     * @param ?mixed $value
      *
      * @return $this|string
+     * @throws Exception
      */
     public function attr(string $name, $value = null)
     {
+        if (!($this->DOMDocument instanceof \DOMElement)) {
+            throw new Exception('This element does not support attributes');
+        }
+
         if ($value === null) {
             return $this->DOMDocument->getAttribute($name);
         }
@@ -377,6 +395,10 @@ class DomElement implements DomElementInterface
     private function xPathToCollection(string $xpath): DomCollection
     {
         $this->reloadSimpleXMLStruct();
+
+        if (is_null($this->sxmlDocument)) {
+            throw new Exception('Document does not support xpath');
+        }
 
         $collection = collect($this->sxmlDocument->xpath($xpath))
             ->map(Closure::fromCallable([$this, 'convertSimpleXmlToDomElement']))
@@ -415,7 +437,7 @@ class DomElement implements DomElementInterface
      */
     private function convertSimpleXmlToDomElement(SimpleXMLElement $element): DomElement
     {
-        $domElement = new static($this->selectorConverter);
+        $domElement = new self($this->selectorConverter);
         $domElement->loadSimpleXML($element);
 
         return $domElement;

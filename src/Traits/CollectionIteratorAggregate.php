@@ -8,19 +8,14 @@ use ArrayIterator;
 use Traversable;
 
 /**
- * Trait CollectionIteratorAgggregate
+ * Trait CollectionIteratorAggregate
  *
  * @package Zae\DOM
  */
 trait CollectionIteratorAggregate
 {
     /**
-     * Retrieve an external iterator
-     *
-     * @link  https://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Traversable An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
-     * @since 5.0.0
+     * Get an iterator over the elements variable in this class.
      */
     public function getIterator(): Traversable
     {
