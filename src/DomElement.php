@@ -200,15 +200,15 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      *
      * @return self
      */
-    public function wrap(DomElementInterface $elem): self
+    public function wrap(DomElementInterface $element): self
     {
-        $this->getParent()->dom()->replaceChild($elem->dom(), $this->dom());
+        $this->getParent()->dom()->replaceChild($element->dom(), $this->dom());
 
-        $elem->append($this);
+        $element->append($this);
 
         return $this;
     }
@@ -260,18 +260,18 @@ class DomElement implements DomElementInterface
     }
 
     /**
-     * @param DomElementInterface|DomCollectionInterface $elements
+     * @param DomElementInterface|DomCollectionInterface $element
      *
      * @return self
      */
-    public function prepend($elements): self
+    public function prepend($element): self
     {
-        if ($elements instanceof DomCollectionInterface) {
-            $elements->each(function (DomElementInterface $elem) {
+        if ($element instanceof DomCollectionInterface) {
+            $element->each(function (DomElementInterface $elem) {
                 $this->DOMDocument->insertBefore($elem->dom(), $this->DOMDocument->firstChild);
             });
         } else {
-            $this->DOMDocument->insertBefore($elements->dom(), $this->DOMDocument->firstChild);
+            $this->DOMDocument->insertBefore($element->dom(), $this->DOMDocument->firstChild);
         }
 
         return $this;

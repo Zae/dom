@@ -58,11 +58,11 @@ interface DomInterface
     public function html(): string;
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      *
      * @return DomElementInterface|DomCollectionInterface
      */
-    public function wrap(DomElementInterface $elem);
+    public function wrap(DomElementInterface $element);
 
     /**
      * @param DomElementInterface $element

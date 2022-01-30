@@ -175,74 +175,74 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @param DomElementInterface $wrapper
+     * @param DomElementInterface $element
      * @return self
      */
-    public function wrap(DomElementInterface $wrapper): self
+    public function wrap(DomElementInterface $element): self
     {
-        $this->elements->each(static function (DomElementInterface $element) use ($wrapper) {
-            $element->wrap($wrapper);
+        $this->elements->each(static function (DomElementInterface $elem) use ($element) {
+            $elem->wrap($element);
         });
 
         return $this;
     }
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      * @return self
      */
-    public function before(DomElementInterface $elem): self
+    public function before(DomElementInterface $element): self
     {
-        $this->elements->each(static function (DomElementInterface $element) use ($elem) {
-            $element->before($elem);
+        $this->elements->each(static function (DomElementInterface $elem) use ($element) {
+            $elem->before($element);
         });
 
         return $this;
     }
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      *
      * @return self
      */
-    public function after(DomElementInterface $elem): self
+    public function after(DomElementInterface $element): self
     {
-        $this->elements->each(static function (DomElementInterface $element) use ($elem) {
-            $element->after($elem);
+        $this->elements->each(static function (DomElementInterface $elem) use ($element) {
+            $elem->after($element);
         });
 
         return $this;
     }
 
     /**
-     * @param DomElementInterface $elem
+     * @param DomElementInterface $element
      * @return self
      */
-    public function append(DomElementInterface $elem): self
+    public function append(DomElementInterface $element): self
     {
-        $this->elements->each(static function (DomElementInterface $element) use ($elem) {
-            $element->append($elem);
+        $this->elements->each(static function (DomElementInterface $elem) use ($element) {
+            $elem->append($element);
         });
 
         return $this;
     }
 
     /**
-     * @param DomElementInterface|DomCollectionInterface $elements
+     * @param DomElementInterface|DomCollectionInterface $element
      *
      * @return self
      */
-    public function prepend($elements): self
+    public function prepend($element): self
     {
-        if ($elements instanceof DomCollectionInterface) {
-            $elements->each(function (DomElementInterface $elem) {
+        if ($element instanceof DomCollectionInterface) {
+            $element->each(function (DomElementInterface $elem) {
                 $this->elements->each(static function (DomElementInterface $element) use ($elem) {
                     $element->prepend($elem);
                 });
             });
         } else {
-            $this->elements->each(static function (DomElementInterface $element) use ($elements) {
-                $element->prepend($elements);
+            $this->elements->each(static function (DomElementInterface $elem) use ($element) {
+                $elem->prepend($element);
             });
         }
 
