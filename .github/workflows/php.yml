@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   linting:
+    name: Run Linters
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -41,6 +42,7 @@ jobs:
       run: composer run psr-12-lint
 
   tests:
+    name: Run Tests
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
