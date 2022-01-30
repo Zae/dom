@@ -3,7 +3,7 @@ name: DOM Workflow
 on: [push]
 
 jobs:
-  linting:
+  lint:
     name: Run Linters
     runs-on: ${{ matrix.operating-system }}
     strategy:
