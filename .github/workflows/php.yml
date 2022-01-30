@@ -38,8 +38,8 @@ jobs:
       - name: PHP Lint
         run: composer run php-lint
 
-    - name: PSR-12 Codestyle Check
-      run: composer run psr-12-lint
+      - name: PSR-12 Codestyle Check
+        run: composer run psr-12-lint
 
   tests:
     name: Run Tests
