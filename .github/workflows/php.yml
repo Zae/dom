@@ -44,6 +44,9 @@ jobs:
       - name: Psalm
         run: composer run psalm
 
+      - name: Psalm
+        run: composer run phpstan
+
   tests:
     name: Run Tests
     runs-on: ${{ matrix.operating-system }}
