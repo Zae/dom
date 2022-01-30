@@ -297,7 +297,8 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
      * @param string $name
      * @param null   $value
      *
-     * @return $this|string|null
+     * @return DomInterface|null|string
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
     public function attr(string $name, $value = null)
     {
