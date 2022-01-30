@@ -3,6 +3,43 @@ name: DOM Workflow
 on: [push]
 
 jobs:
+  linting:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ ubuntu-latest ]
+        php-version: [ '7.2', '7.3', '7.4' ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Check PHP Version
+        run: php -v
+
+      - name: Check Composer Version
+        run: composer -V
+
+      - name: Check PHP Extensions
+        run: php -m
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-suggest
+
+      - name: PHP Lint
+        run: composer run php-lint
+
+    - name: PSR-12 Codestyle Check
+      run: composer run psr-12-lint
+
   tests:
     runs-on: ${{ matrix.operating-system }}
     strategy:
@@ -33,13 +70,7 @@ jobs:
         run: composer validate
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-suggest --ignore-platform-reqs
-
-      - name: PHP Lint
-        run: composer run php-lint
-
-      - name: PSR-12 Codestyle Check
-        run: composer run psr-12-lint
+        run: composer install --no-interaction --no-suggest
 
       - name: Run test suite
         run: composer run test-coverage
