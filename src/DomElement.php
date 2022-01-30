@@ -353,6 +353,7 @@ class DomElement implements DomElementInterface
             $doc = new DOMDocument();
             $node = $doc->importNode($this->DOMDocument, true);
 
+            /** @phpstan-ignore-next-line */
             if ($node) {
                 $doc->appendChild($node);
             }
