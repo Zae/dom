@@ -59,7 +59,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
      */
     public function map(callable $callback): DomCollection
     {
-        return new static(
+        return new self(
             $this
                 ->elements
                 ->map($callback)
@@ -279,7 +279,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
      */
     public function merge(DomCollectionInterface $collection): DomCollection
     {
-        return new static(
+        return new self(
             $collection->elements()->merge($this->elements)->toArray(),
             $this->selectorConverter
         );
@@ -295,7 +295,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
 
     /**
      * @param string $name
-     * @param null   $value
+     * @param ?mixed $value
      *
      * @return DomInterface|null|string
      * @psalm-suppress ImplementedReturnTypeMismatch

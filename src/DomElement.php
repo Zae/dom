@@ -13,12 +13,12 @@ use Symfony\Component\CssSelector\CssSelectorConverter;
 use Zae\DOM\Contracts\DomCollectionInterface;
 use Zae\DOM\Contracts\DomElementInterface;
 use Zae\DOM\Traits\Stringable;
+use function is_null;
 
 /**
  * Class DomElement
  *
  * @package Zae\DOM
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class DomElement implements DomElementInterface
 {
@@ -35,7 +35,7 @@ class DomElement implements DomElementInterface
     private $DOMDocument;
 
     /**
-     * @var SimpleXMLElement
+     * @var ?SimpleXMLElement
      */
     private $sxmlDocument;
 
@@ -201,7 +201,7 @@ class DomElement implements DomElementInterface
             $elem = $this->DOMDocument->createElement($name, $value);
         }
 
-        return new static($this->selectorConverter, $elem);
+        return new self($this->selectorConverter, $elem);
     }
 
     /**
@@ -337,7 +337,7 @@ class DomElement implements DomElementInterface
      */
     public function getParent(): DomElementInterface
     {
-        return new static($this->selectorConverter, $this->dom()->parentNode);
+        return new self($this->selectorConverter, $this->dom()->parentNode);
     }
 
     /**
@@ -365,7 +365,7 @@ class DomElement implements DomElementInterface
 
     /**
      * @param string $name
-     * @param null $value
+     * @param ?mixed $value
      *
      * @return $this|string
      * @throws Exception
@@ -393,6 +393,10 @@ class DomElement implements DomElementInterface
     private function xPathToCollection(string $xpath): DomCollection
     {
         $this->reloadSimpleXMLStruct();
+
+        if (is_null($this->sxmlDocument)) {
+            throw new Exception('Document does not support xpath');
+        }
 
         $collection = collect($this->sxmlDocument->xpath($xpath))
             ->map(Closure::fromCallable([$this, 'convertSimpleXmlToDomElement']))
@@ -431,7 +435,7 @@ class DomElement implements DomElementInterface
      */
     private function convertSimpleXmlToDomElement(SimpleXMLElement $element): DomElement
     {
-        $domElement = new static($this->selectorConverter);
+        $domElement = new self($this->selectorConverter);
         $domElement->loadSimpleXML($element);
 
         return $domElement;
