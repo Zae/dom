@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --ignore-platform-reqs
 
+      - name: PHP Lint
+        run: composer run php-lint
+
       - name: PSR-12 Codestyle Check
         run: composer run psr-12-lint
 
