@@ -420,6 +420,7 @@ class DomElement implements DomElementInterface
         $dom = dom_import_simplexml($this->sxmlDocument);
         libxml_use_internal_errors($use_errors);
 
+        /** @phpstan-ignore-next-line */
         if (!$dom) {
             throw new Exception('Unable to load XML structure into DOM');
         }
