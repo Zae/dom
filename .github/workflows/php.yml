@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-version: [ '7.2', '7.3', '7.4' ]
+        php-version: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
 
     steps:
       - uses: actions/checkout@v2
@@ -47,15 +47,14 @@ jobs:
       - name: Psalm
         run: composer run phpstan
 
-  tests:
-    name: Run Tests
+  test-lowest-deps:
+    name: Run Tests on lowest dependencies
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-version: ['7.2', '7.3', '7.4']
-        dependency-version: [ prefer-lowest, prefer-stable ]
+        php-version: ['7.2']
 
     steps:
       - uses: actions/checkout@v2
@@ -79,7 +78,44 @@ jobs:
         run: composer validate
 
       - name: Install dependencies
-        run: composer update --no-interaction --no-suggest --${{ matrix.dependency-version }}
+        if: ${{ matrix.php-version === 7.2 }}
+        run: composer update --no-interaction --no-suggest --prefer-lowest
+
+      - name: Run test suite
+        run: composer run test
+
+  tests:
+    name: Run Tests
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: pcov
+
+      - name: Check PHP Version
+        run: php -v
+
+      - name: Check Composer Version
+        run: composer -V
+
+      - name: Check PHP Extensions
+        run: php -m
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer update --no-interaction --no-suggest
 
       - name: Run test suite
         run: composer run test-coverage
