@@ -47,6 +47,7 @@ trait CollectionArrayAccess
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $node = $this->elements[$offset];
