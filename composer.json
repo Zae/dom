@@ -41,7 +41,7 @@
         "psalm": "vendor/bin/psalm",
         "phpstan": "vendor/bin/phpstan analyse",
         "test-coverage": "@php -dpcov.enabled=1 -dpcov.directory=src -dpcov.exclude=~vendor~ vendor/bin/phpunit --coverage-text --coverage-clover=clover.xml",
-        "infection": "vendor/bin/infection -j4 --only-covered --min-covered-msi=100"
+        "infection": "vendor/bin/infection -j4 --only-covered --min-covered-msi=80"
     },
     "config": {
         "preferred-install": "dist",
