@@ -22,6 +22,8 @@ use Zae\DOM\Traits\Stringable;
  * Class DomCollection
  *
  * @package Zae\DOM
+ * @implements \ArrayAccess<array-key, DomInterface>
+ * @implements \IteratorAggregate<array-key, DomInterface>
  */
 class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggregate, Countable
 {
@@ -31,7 +33,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     use Stringable;
 
     /**
-     * @var Collection
+     * @var Collection<array-key, DomElementInterface|DomCollectionInterface>
      */
     private $elements;
 
@@ -43,7 +45,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     /**
      * DomCollection constructor.
      *
-     * @param array|DomInterface[]  $elements
+     * @param DomElementInterface[]|DomCollectionInterface[] $elements
      * @param CssSelectorConverter|null $selectorConverter
      */
     public function __construct(array $elements = [], ?CssSelectorConverter $selectorConverter = null)
@@ -286,7 +288,7 @@ class DomCollection implements DomCollectionInterface, ArrayAccess, IteratorAggr
     }
 
     /**
-     * @return Collection
+     * @return Collection<array-key, DomElementInterface|DomCollectionInterface>
      */
     public function elements(): Collection
     {

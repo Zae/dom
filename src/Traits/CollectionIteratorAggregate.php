@@ -6,6 +6,7 @@ namespace Zae\DOM\Traits;
 
 use ArrayIterator;
 use Traversable;
+use Zae\DOM\Contracts\DomInterface;
 
 /**
  * Trait CollectionIteratorAggregate
@@ -16,6 +17,7 @@ trait CollectionIteratorAggregate
 {
     /**
      * Get an iterator over the elements variable in this class.
+     * @return Traversable<DomInterface>
      */
     public function getIterator(): Traversable
     {

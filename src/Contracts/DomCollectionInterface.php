@@ -40,7 +40,7 @@ interface DomCollectionInterface extends DomInterface
     public function first(): ?DomInterface;
 
     /**
-     * @return Collection
+     * @return Collection<array-key, DomElementInterface|DomCollectionInterface>
      */
     public function elements(): Collection;
 }

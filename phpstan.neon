@@ -1,5 +1,8 @@
 parameters:
-	level: 5
-	reportUnmatchedIgnoredErrors: false
-	paths:
-		- src
+    level: 6
+    reportUnmatchedIgnoredErrors: true
+    paths:
+        - src
+    stubFiles:
+        - types/stubs/Collection.stub
+        - types/stubs/Enumerable.stub
