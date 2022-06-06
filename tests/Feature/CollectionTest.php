@@ -1,10 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Zae\DOM\Tests\Feature;
 
 use Zae\DOM\DomElement;
+use Zae\DOM\Tests\Mocks\TestDomCol;
 use Zae\DOM\Tests\TestCase;
+use Zae\DOM\Tests\Traits\useMocks;
 
 /**
  * Class CollectionTest
@@ -13,7 +16,9 @@ use Zae\DOM\Tests\TestCase;
  */
 class CollectionTest extends TestCase
 {
-    const html3 = '<div class="parent"><div class="firstchild"></div><div class="lastchild"></div></div>';
+    use useMocks;
+
+    private const html3 = '<div class="parent"><div class="firstchild"></div><div class="lastchild"></div></div>';
 
     /**
      * @test
@@ -22,12 +27,12 @@ class CollectionTest extends TestCase
     public function it_can_find_next_siblings_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild');
         $last = $first->nextSiblings();
 
-        $this->assertStringContainsString('<div class="lastchild"></div>', (string)$last);
+        static::assertStringContainsString('<div class="lastchild"></div>', (string)$last);
     }
 
     /**
@@ -37,14 +42,14 @@ class CollectionTest extends TestCase
     public function it_can_wrap_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild');
         $last = $doc->find('.lastchild')->first();
 
         $first->wrap($last);
 
-        $this->assertStringContainsString('<div class="parent"><div class="lastchild"><div class="firstchild"></div></div></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"><div class="lastchild"><div class="firstchild"></div></div></div>', (string)$doc);
     }
 
     /**
@@ -54,14 +59,14 @@ class CollectionTest extends TestCase
     public function it_can_before_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild');
         $last = $doc->find('.lastchild')->first();
 
         $first->before($last);
 
-        $this->assertStringContainsString('<div class="parent"><div class="lastchild"></div><div class="firstchild"></div></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"><div class="lastchild"></div><div class="firstchild"></div></div>', (string)$doc);
     }
 
     /**
@@ -71,14 +76,14 @@ class CollectionTest extends TestCase
     public function it_can_after_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild')->first();
         $last = $doc->find('.lastchild');
 
         $last->after($first);
 
-        $this->assertStringContainsString('<div class="parent"><div class="lastchild"></div><div class="firstchild"></div></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"><div class="lastchild"></div><div class="firstchild"></div></div>', (string)$doc);
     }
 
     /**
@@ -88,14 +93,14 @@ class CollectionTest extends TestCase
     public function it_can_append_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild');
         $last = $doc->find('.lastchild')->first();
 
         $first->append($last);
 
-        $this->assertStringContainsString('<div class="parent"><div class="firstchild"><div class="lastchild"></div></div></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"><div class="firstchild"><div class="lastchild"></div></div></div>', (string)$doc);
     }
 
     /**
@@ -105,14 +110,14 @@ class CollectionTest extends TestCase
     public function it_can_prepend_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $first = $doc->find('.firstchild');
         $last = $doc->find('.lastchild')->first();
 
         $first->prepend($last);
 
-        $this->assertStringContainsString('<div class="parent"><div class="firstchild"><div class="lastchild"></div></div></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"><div class="firstchild"><div class="lastchild"></div></div></div>', (string)$doc);
     }
 
     /**
@@ -122,12 +127,52 @@ class CollectionTest extends TestCase
     public function it_can_empty_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $parent = $doc->find('.parent');
 
         $parent->empty();
 
-        $this->assertStringContainsString('<div class="parent"></div>', (string)$doc);
+        static::assertStringContainsString('<div class="parent"></div>', (string)$doc);
+    }
+
+    /**
+     * @test
+     * @group collection
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function it_should_call_each_when_collection(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(self::html3);
+
+        $collectionMock = \Mockery::mock(TestDomCol::class);
+        $collectionMock
+            ->expects()
+            ->each(\Mockery::type('callable'));
+
+        $doc->prepend($collectionMock);
+    }
+
+    /**
+     * @test
+     * @group collection
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function it_should_call_each_when_collection_collection(): void
+    {
+        $doc = new DomElement();
+        $doc->loadString(self::html3);
+
+        $collectionMock = \Mockery::mock(TestDomCol::class);
+        $collectionMock
+            ->expects()
+            ->each(\Mockery::type('callable'));
+
+        $doc->find('.parent > *')->prepend($collectionMock);
     }
 }
