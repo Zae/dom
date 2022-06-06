@@ -1,6 +1,6 @@
 parameters:
     level: 6
-    reportUnmatchedIgnoredErrors: true
+    reportUnmatchedIgnoredErrors: false
     paths:
         - src
     stubFiles:
