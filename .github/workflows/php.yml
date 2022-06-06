@@ -41,8 +41,8 @@ jobs:
       - name: PSR-12 Codestyle Check
         run: composer run psr-12-lint
 
-      - name: Psalm
-        run: composer run psalm
+#      - name: Psalm
+#        run: composer run psalm
 
       - name: PHPStan
         run: composer run phpstan
