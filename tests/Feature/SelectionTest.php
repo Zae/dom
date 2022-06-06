@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Zae\DOM\Tests\Feature;
@@ -30,7 +31,7 @@ class SelectionTest extends TestCase
 
 HTML;
 
-    const html3 = '<div class="parent"><div class="firstchild"></div><div class="lastchild"></div></div>';
+    private const html3 = '<div class="parent"><div class="firstchild"></div><div class="lastchild"></div></div>';
 
     /**
      * @test
@@ -40,12 +41,12 @@ HTML;
     public function it_can_use_basic_css_selector(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::$html);
+        $doc->loadString(self::$html);
 
         $captions = $doc->find('.caption');
 
-        $this->assertCount(2, $captions);
-        $this->assertStringContainsString('<div class="caption">', (string)$captions);
+        static::assertCount(2, $captions);
+        static::assertStringContainsString('<div class="caption">', (string)$captions);
     }
 
     /**
@@ -55,10 +56,10 @@ HTML;
      */
     public function it_can_use_nested_css_selector(): void
     {
-        $string = $this->wrapCaptionableImages(static::$html);
+        $string = $this->wrapCaptionableImages(self::$html);
 
-        $this->assertStringContainsString('<figcaption><h1>CAPTION 1</h1></figcaption>', $string);
-        $this->assertStringContainsString('<figcaption><h1>CAPTION 2</h1></figcaption>', $string);
+        static::assertStringContainsString('<figcaption><h1>CAPTION 1</h1></figcaption>', $string);
+        static::assertStringContainsString('<figcaption><h1>CAPTION 2</h1></figcaption>', $string);
     }
 
     /**
@@ -68,12 +69,12 @@ HTML;
     public function it_can_find_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $parent = $doc->find('.parent');
         $last = $parent->find('.lastchild');
 
-        $this->assertStringContainsString('<div class="lastchild"></div>', (string)$last);
+        static::assertStringContainsString('<div class="lastchild"></div>', (string)$last);
     }
 
     /**
@@ -84,12 +85,12 @@ HTML;
     public function it_can_find_xpath_in_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html3);
+        $doc->loadString(self::html3);
 
         $parent = $doc->find('.parent');
         $last = $parent->findxPath("descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' lastchild ')]");
 
-        $this->assertStringContainsString('<div class="lastchild"></div>', (string)$last);
+        static::assertStringContainsString('<div class="lastchild"></div>', (string)$last);
     }
 
     /**
@@ -101,7 +102,7 @@ HTML;
         $doc = new DomElement();
         $doc->loadHTML(__DIR__ . '/../assets/captions.html');
 
-        $this->assertEquals(static::$html, (string)$doc);
+        static::assertEquals(self::$html, (string)$doc);
     }
 
     /**
@@ -115,7 +116,7 @@ HTML;
 
         $link = $doc->find('*:link');
 
-        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
+        static::assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
     }
 
     /**
@@ -132,7 +133,7 @@ HTML;
 
         $link = $col->find('*:link');
 
-        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
+        static::assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
     }
 
     /**
@@ -149,7 +150,7 @@ HTML;
 
         $link = $doc->find('*:link');
 
-        $this->assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
+        static::assertEquals("<a href=\"#\">LINK</a>\n", (string)$link);
     }
 
     /**

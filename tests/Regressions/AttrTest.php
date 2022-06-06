@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Zae\DOM\Tests\Regressions;
@@ -12,7 +13,7 @@ use Zae\DOM\Tests\TestCase;
  */
 class AttrTest extends TestCase
 {
-    const html1 = '<div class="parent"></div>';
+    private const html1 = '<div class="parent"></div>';
 
     /**
      * @test
@@ -21,7 +22,7 @@ class AttrTest extends TestCase
     public function it_can_handle_attr_on_empty_collection(): void
     {
         $doc = new DomElement();
-        $doc->loadString(static::html1);
+        $doc->loadString(self::html1);
 
         $emptycollection = $doc->find('.notexists');
 

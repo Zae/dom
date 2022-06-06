@@ -94,7 +94,7 @@ interface DomInterface
 
     /**
      * @param string $name
-     * @param null   $value
+     * @param ?mixed $value
      *
      * @return DomElementInterface|DomCollectionInterface|string
      */
